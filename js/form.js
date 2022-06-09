@@ -7,8 +7,15 @@ btnAdicionar.addEventListener("click", function (event) {
 
   let pacienteTr = montaTr(paciente);
 
+  let erros = validaPaciente(paciente);
+
+  if(erros.length > 0){
+    exibeMensagensDeErro(erros);
+    return
+  }
+
   if(!validaPaciente(paciente)){
-      alert("peso invalido");
+     
       return;
 
   }
@@ -18,13 +25,28 @@ btnAdicionar.addEventListener("click", function (event) {
   tabela.appendChild(pacienteTr);
 
   form.reset();
+  var mensagensDeErro = document.querySelector("#mensagens-erro");
+  mensagensDeErro.innerHTML = "";
+
+  function exibeMensagensDeErro(erros){
+    let ul = document.querySelector("#mensagens-erro")
+    ul.innerHTML = ""
+    
+    erros.forEach(function(erro){
+      let li = document.createElement("li");
+      li.textContent = erro;
+      ul.appendChild(li);
+
+    })
+  }
+
 
   function obtemPacienteDoFormulario() {
     let paciente = {
       nome: form.nome.value,
       peso: form.peso.value,
       altura: form.altura.value,
-      gordura: form.altura.value,
+      gordura: form.gordura.value,
       imc: calculaImc(form.peso.value, form.altura.value),
     };
 
@@ -54,13 +76,32 @@ btnAdicionar.addEventListener("click", function (event) {
   }
 
   function validaPaciente(paciente){
-    if(validaPeso(paciente.peso)){
-        return true;
 
-    }else{
+    let erros = [];
 
-        return false;
+    if(paciente.nome.length == 0){
+      erros.push("Nome não pode ser em branco")
     }
+
+    if(!validaPeso(paciente.peso)){
+      erros.push("Peso é invalido")
+   
+    if(!validaAltura(paciente.altura))
+        erros.push("Altura é invalido")
+    }
+
+    if(paciente.gordura.length == 0){
+      erros.push("Gordura não pode ser em Branco")
+    }
+
+    if(paciente.peso.length == 0){
+    erros.push("O peso não pode ser em branco")
+  }
+  if(paciente.altura.length == 0){
+    erros.push("A altura não pode ser em branco")
+  }
+    return erros;
+
   }
 
 
